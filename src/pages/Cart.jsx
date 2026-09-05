@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "../css/Cart.css";
 
 export default function Cart({ cart }) {
   const totalItems = cart.reduce((total, item) => {
@@ -14,7 +15,7 @@ export default function Cart({ cart }) {
   return cart.length > 0 ? (
     <div>
       <h2>Your Cart</h2>
-      <ol>
+      <ol className="cartList">
         {cart.map((product) => (
           <li key={product.id}>
             <p>
@@ -29,7 +30,9 @@ export default function Cart({ cart }) {
       <p>
         <strong>Total Items:</strong> {totalItems}
       </p>
-      <p><strong>Total Price:</strong> Rs. {totalCost}</p>
+      <p>
+        <strong>Total Price:</strong> Rs. {totalCost}
+      </p>
     </div>
   ) : (
     <div>

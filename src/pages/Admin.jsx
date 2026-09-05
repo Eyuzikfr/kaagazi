@@ -66,6 +66,7 @@ export default function Admin({ categories, setCategories }) {
       <h2>Admin Panel</h2>
       <CategoryForm onAddCategory={addCategory} />
 
+      <h2>Search Category</h2>
       <input
         type="text"
         placeholder="Search category..."

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import '../css/CategoryList.css';
-
+import "../css/CategoryList.css";
 
 export default function CategoryList({
   categories,
@@ -29,6 +28,7 @@ export default function CategoryList({
 
   return (
     <div>
+      <h2>Categories</h2>
       {categories.map((category) => (
         <div key={category.id}>
           {editingId === category.id ? (
@@ -42,7 +42,7 @@ export default function CategoryList({
             </form>
           ) : (
             <div className="flex">
-              <h2>{category.name}</h2>
+              <h3>{category.name}</h3>
               {isAdmin && (
                 <>
                   <button onClick={() => startEditing(category)}>Edit</button>
