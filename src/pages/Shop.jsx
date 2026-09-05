@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../App.css";
 // import CategoryList from "../components/CategoryList";
 
+
 export default function Customer({ categories }) {
   // const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
