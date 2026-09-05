@@ -56,7 +56,25 @@ function App() {
   const [cart, setCart] = useState([]);
 
   function addToCart(product) {
-    setCart((currentCart) => [...currentCart, product]);
+    setCart((currentCart) => {
+      const existingProduct = currentCart.find(
+        (item) => item.id === product.id,
+      );
+
+      if (existingProduct) {
+        return currentCart.map((item) => {
+          if (item.id === product.id) {
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          }
+          return item;
+        });
+      }
+
+      return [...currentCart, { ...product, quantity: 1 }];
+    });
   }
 
   return (
