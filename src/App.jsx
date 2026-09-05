@@ -5,6 +5,7 @@ import Customer from "./pages/Shop";
 import Categories from "./pages/Categories";
 import CategoryProducts from "./pages/CategoryProducts";
 import Cart from "./pages/Cart";
+import "./App.css";
 
 function App() {
   const [categories, setCategories] = useState([
@@ -79,15 +80,29 @@ function App() {
 
   return (
     <div>
-      <h1>Kaagazi</h1>
-      <p>Online Bookstore</p>
-
-      <nav>
-        <Link to="/admin">Admin Panel</Link>
-        <Link to="/shop">Shop</Link>
-        <Link to="/categories">Categories</Link>
-        <Link to="/cart">Cart</Link>
-      </nav>
+      <div className="headerContainer">
+        <header>
+          <div className="logo">
+            <h1>Kaagazi</h1>
+            <p>Online Bookstore</p>
+          </div>
+          <nav>
+            <Link className="navLink" to="/admin">
+              Admin Panel
+            </Link>
+            <Link className="navLink" to="/shop">
+              Shop
+            </Link>
+            <Link className="navLink" to="/categories">
+              Categories
+            </Link>
+            <Link className="navLink" to="/cart">
+              Cart
+            </Link>
+          </nav>
+        </header>
+      </div>
+      <hr />
 
       <Routes>
         <Route

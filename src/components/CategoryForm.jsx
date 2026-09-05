@@ -17,7 +17,7 @@ function CategoryForm({ onAddCategory }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Add Category</h2>
+      <h3>Add Category</h3>
       <input
         type="text"
         placeholder="Category name"

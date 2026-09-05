@@ -1,3 +1,53 @@
+h1 {
+  font-family: "Edu NSW ACT Cursive", cursive;
+}
+
+h2,
+h3 {
+  font-family: "Iosevka Charon", cursive;
+}
+
+.headerContainer {
+  padding: 0 120px;
+  background-color: #f5f5f5;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 0 1rem; */
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo * {
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #333;
+  padding: 7px;
+  transition: all 0.3s ease;
+}
+
+.navLink:hover {
+  color: #eee;
+  background-color: #333;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+}
+
 .productCard {
   border: 0.5px solid #ccc;
   width: 10rem;
@@ -5,7 +55,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0.5rem;
+  padding: 0.5rem 1.5rem;
 
   border-radius: 10px;
   background-color: #f5f5f5;
@@ -17,4 +67,10 @@
   grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 1rem;
   padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 0 40px;
+  }
 }

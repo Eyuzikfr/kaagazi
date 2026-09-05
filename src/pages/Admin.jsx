@@ -2,6 +2,7 @@ import { useState } from "react";
 import CategoryForm from "../components/CategoryForm";
 import ProductForm from "../components/ProductForm";
 import CategoryList from "../components/CategoryList";
+import "../css/Admin.css";
 
 export default function Admin({ categories, setCategories }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,18 +63,24 @@ export default function Admin({ categories, setCategories }) {
     );
   }
   return (
-    <div>
+    <div className="adminPanelContainer">
       <h2>Admin Panel</h2>
-      <CategoryForm onAddCategory={addCategory} />
+      <div className="adminControlGrid">
+        <div className="categoryControlCard">
+          <CategoryForm onAddCategory={addCategory} />
+          <h3>Search Category</h3>
+          <input
+            type="text"
+            placeholder="Search category..."
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </div>
+        <div className="categoryControlCard">
+          <ProductForm categories={categories} onAddProduct={addProduct} />
+        </div>
+      </div>
 
-      <h2>Search Category</h2>
-      <input
-        type="text"
-        placeholder="Search category..."
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.target.value)}
-      />
-      <ProductForm categories={categories} onAddProduct={addProduct} />
       <CategoryList
         categories={filteredCategories}
         onDeleteCategory={deleteCategory}

@@ -31,7 +31,7 @@ function ProductForm({ categories, onAddProduct }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Add Product</h2>
+      <h3>Add Product</h3>
 
       <input
         type="text"
