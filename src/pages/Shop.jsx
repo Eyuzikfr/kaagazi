@@ -2,8 +2,7 @@ import { useState } from "react";
 import "../App.css";
 // import CategoryList from "../components/CategoryList";
 
-
-export default function Customer({ categories }) {
+export default function Customer({ categories, addToCart }) {
   // const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -35,6 +34,8 @@ export default function Customer({ categories }) {
             <h3>{product.name}</h3>
             <p>{product.author}</p>
             <p>Rs. {product.price}</p>
+
+            <button onClick={() => addToCart(product)}>Add To Cart</button>
           </div>
         ))}
       </div>

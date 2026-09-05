@@ -4,6 +4,7 @@ import Admin from "./pages/Admin";
 import Customer from "./pages/Shop";
 import Categories from "./pages/Categories";
 import CategoryProducts from "./pages/CategoryProducts";
+import Cart from "./pages/Cart";
 
 function App() {
   const [categories, setCategories] = useState([
@@ -52,6 +53,11 @@ function App() {
       ],
     },
   ]);
+  const [cart, setCart] = useState([]);
+
+  function addToCart(product) {
+    setCart((currentCart) => [...currentCart, product]);
+  }
 
   return (
     <div>
@@ -62,6 +68,7 @@ function App() {
         <Link to="/admin">Admin Panel</Link>
         <Link to="/shop">Shop</Link>
         <Link to="/categories">Categories</Link>
+        <Link to="/cart">Cart</Link>
       </nav>
 
       <Routes>
@@ -72,7 +79,10 @@ function App() {
           }
         />
 
-        <Route path="/shop" element={<Customer categories={categories} />} />
+        <Route
+          path="/shop"
+          element={<Customer categories={categories} addToCart={addToCart} />}
+        />
 
         <Route
           path="/categories"
@@ -83,6 +93,8 @@ function App() {
           path="/categories/:categoryId"
           element={<CategoryProducts categories={categories} />}
         />
+
+        <Route path="/cart" element={<Cart cart={cart} />} />
       </Routes>
     </div>
   );
