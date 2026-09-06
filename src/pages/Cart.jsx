@@ -44,6 +44,7 @@ export default function Cart({ cart, removeFromCart, moveToWishlist }) {
     </div>
   ) : (
     <div>
+      <h2>Your Cart</h2>
       <p>Cart is empty.</p>
       <Link to="/shop">Shop now</Link>
     </div>

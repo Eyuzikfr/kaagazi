@@ -1,5 +1,5 @@
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Admin from "./pages/Admin";
 import Shop from "./pages/Shop";
 import Categories from "./pages/Categories";
@@ -8,9 +8,16 @@ import Cart from "./pages/Cart";
 import Checkout from "./Checkout";
 import Orders from "./Orders";
 import Wishlist from "./pages/Wishlist";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import "./css/App.css";
 
 function App() {
+  useEffect(() => {
+    fetch("http://localhost:5000/api/test")
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  }, []);
+
   const [categories, setCategories] = useState([
     {
       id: 1,
@@ -211,6 +218,8 @@ function App() {
             />
           }
         />
+
+        <Route path="/payment/success" element={<PaymentSuccess />} />
       </Routes>
     </div>
   );
