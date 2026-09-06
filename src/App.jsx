@@ -1,11 +1,13 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Admin from "./pages/Admin";
 import Customer from "./pages/Shop";
 import Categories from "./pages/Categories";
 import CategoryProducts from "./pages/CategoryProducts";
 import Cart from "./pages/Cart";
-import "./App.css";
+import Checkout from "./Checkout";
+import Orders from "./Orders";
+import "./css/App.css";
 
 function App() {
   const [categories, setCategories] = useState([
@@ -55,6 +57,9 @@ function App() {
     },
   ]);
   const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
+
+  const navigate = useNavigate();
 
   function addToCart(product) {
     setCart((currentCart) => {
@@ -76,6 +81,19 @@ function App() {
 
       return [...currentCart, { ...product, quantity: 1 }];
     });
+  }
+
+  function placeOrder() {
+    const newOrder = {
+      id: Date.now(),
+      items: cart,
+    };
+
+    setOrders((oldOrders) => [...oldOrders, newOrder]);
+
+    setCart([]);
+
+    navigate("/orders");
   }
 
   return (
@@ -128,6 +146,13 @@ function App() {
         />
 
         <Route path="/cart" element={<Cart cart={cart} />} />
+
+        <Route
+          path="/checkout"
+          element={<Checkout cart={cart} placeOrder={placeOrder} />}
+        />
+
+        <Route path="/orders" element={<Orders orders={orders} />} />
       </Routes>
     </div>
   );

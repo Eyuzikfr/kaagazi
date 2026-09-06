@@ -33,6 +33,9 @@ export default function Cart({ cart }) {
       <p>
         <strong>Total Price:</strong> Rs. {totalCost}
       </p>
+      <button>
+        <Link to="/checkout">Checkout</Link>
+      </button>
     </div>
   ) : (
     <div>
