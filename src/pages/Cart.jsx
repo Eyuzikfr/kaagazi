@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "../css/Cart.css";
 
-export default function Cart({ cart, removeFromCart }) {
+export default function Cart({ cart, removeFromCart, moveToWishlist }) {
   const totalItems = cart.reduce((total, item) => {
     total += item.quantity;
     return total;
@@ -24,6 +24,9 @@ export default function Cart({ cart, removeFromCart }) {
             <p>Rs. {product.price}</p>
             <p>x {product.quantity}</p>
             <button onClick={() => removeFromCart(product.id)}>Remove</button>
+            <button onClick={() => moveToWishlist(product)}>
+              Move to wishlist
+            </button>
           </li>
         ))}
       </ol>

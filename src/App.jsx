@@ -120,6 +120,11 @@ function App() {
     setWishlist(wishlist.filter((item) => item.id !== productId));
   }
 
+  function moveToWishlist(product) {
+    addToWishlist(product);
+    removeFromCart(product.id);
+  }
+
   return (
     <div>
       <div className="headerContainer">
@@ -184,7 +189,7 @@ function App() {
             <Cart
               cart={cart}
               removeFromCart={removeFromCart}
-              addToWishlist={addToWishlist}
+              moveToWishlist={moveToWishlist}
             />
           }
         />
@@ -202,6 +207,7 @@ function App() {
             <Wishlist
               wishlist={wishlist}
               removeFromWishlist={removeFromWishlist}
+              addToCart={addToCart}
             />
           }
         />
