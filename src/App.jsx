@@ -1,12 +1,13 @@
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Admin from "./pages/Admin";
-import Customer from "./pages/Shop";
+import Shop from "./pages/Shop";
 import Categories from "./pages/Categories";
 import CategoryProducts from "./pages/CategoryProducts";
 import Cart from "./pages/Cart";
 import Checkout from "./Checkout";
 import Orders from "./Orders";
+import Wishlist from "./pages/Wishlist";
 import "./css/App.css";
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
   ]);
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
 
   const navigate = useNavigate();
 
@@ -83,6 +85,10 @@ function App() {
     });
   }
 
+  function removeFromCart(productId) {
+    setCart(cart.filter((item) => item.id !== productId));
+  }
+
   function placeOrder() {
     const newOrder = {
       id: Date.now(),
@@ -94,6 +100,24 @@ function App() {
     setCart([]);
 
     navigate("/orders");
+  }
+
+  function addToWishlist(product) {
+    setWishlist((currentWishlist) => {
+      const existingProduct = currentWishlist.find(
+        (item) => item.id === product.id,
+      );
+
+      if (!existingProduct) {
+        return [...currentWishlist, product];
+      }
+
+      return currentWishlist;
+    });
+  }
+
+  function removeFromWishlist(productId) {
+    setWishlist(wishlist.filter((item) => item.id !== productId));
   }
 
   return (
@@ -117,6 +141,9 @@ function App() {
             <Link className="navLink" to="/cart">
               Cart
             </Link>
+            <Link className="navLink" to="/wishlist">
+              Wishlist
+            </Link>
           </nav>
         </header>
       </div>
@@ -132,7 +159,13 @@ function App() {
 
         <Route
           path="/shop"
-          element={<Customer categories={categories} addToCart={addToCart} />}
+          element={
+            <Shop
+              categories={categories}
+              addToCart={addToCart}
+              addToWishlist={addToWishlist}
+            />
+          }
         />
 
         <Route
@@ -145,7 +178,16 @@ function App() {
           element={<CategoryProducts categories={categories} />}
         />
 
-        <Route path="/cart" element={<Cart cart={cart} />} />
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              cart={cart}
+              removeFromCart={removeFromCart}
+              addToWishlist={addToWishlist}
+            />
+          }
+        />
 
         <Route
           path="/checkout"
@@ -153,6 +195,16 @@ function App() {
         />
 
         <Route path="/orders" element={<Orders orders={orders} />} />
+
+        <Route
+          path="/wishlist"
+          element={
+            <Wishlist
+              wishlist={wishlist}
+              removeFromWishlist={removeFromWishlist}
+            />
+          }
+        />
       </Routes>
     </div>
   );
