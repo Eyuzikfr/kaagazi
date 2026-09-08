@@ -9,6 +9,7 @@ import {
   requireAdmin,
 } from "./middleware/authMiddleware.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,8 @@ startServer();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/categories", categoryRoutes);
+app.use("/api/products", productRoutes);
 
 app.get("/api/auth/me", authenticateToken, (req, res) => {
   res.json({
@@ -38,8 +41,6 @@ app.get("/api/admin/test", authenticateToken, requireAdmin, (req, res) => {
     user: req.user,
   });
 });
-
-app.use("/api/categories", categoryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Kaagazi backend is running!");
