@@ -7,6 +7,7 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
+// RETRIEVE all categories
 router.get("/", async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -23,6 +24,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// CREATE  category
 router.post("/", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -69,6 +71,7 @@ router.post("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// UPDATE category
 router.put("/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -110,6 +113,7 @@ router.put("/:id", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
+// DELETE category
 router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,6 +135,32 @@ router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
     });
   } catch (error) {
     console.erorr("DELETE CATEGORY ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const db = req.app.locals.db;
+
+    const category = await db.collection("categories").findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        message: "Category not found",
+      });
+    }
+
+    res.json(category);
+  } catch (error) {
+    console.error("GET CATEGORY ERROR:", error);
 
     res.status(500).json({
       message: "Server error",

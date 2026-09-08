@@ -57,12 +57,27 @@ router.post("/", authenticateToken, requireAdmin, async (req, res) => {
   }
 });
 
-// RETRIEVE products
+// RETRIEVE all products
 router.get("/", async (req, res) => {
   try {
     const db = req.app.locals.db;
 
-    const products = await db.collection("products").find({}).toArray();
+    const products = await db
+      .collection("products")
+      .aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+      ])
+      .toArray();
 
     res.json(products);
   } catch (error) {
@@ -151,6 +166,94 @@ router.delete("/:id", authenticateToken, requireAdmin, async (req, res) => {
     });
   } catch (error) {
     console.error("DELETE PRODUCT ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+// RETRIEVE a single book
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const db = req.app.locals.db;
+
+    const products = await db
+      .collection("products")
+      .aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id),
+          },
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+      ])
+      .toArray();
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    res.json(products[0]);
+  } catch (error) {
+    console.error("GET PRODUCT ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+// RETRIEVE products filtered according to category
+router.get("/", async (req, res) => {
+  try {
+    const { categoryId } = req.query;
+
+    const db = req.app.locals.db;
+
+    const matchStage = {};
+
+    if (categoryId) {
+      matchStage.categoryId = new ObjectId(categoryId);
+    }
+
+    const products = await db
+      .collection("products")
+      .aggregate([
+        {
+          $match: matchStage,
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+      ])
+      .toArray();
+
+    res.json(products);
+  } catch (error) {
+    console.error("GET PRODUCTS ERROR:", error);
 
     res.status(500).json({
       message: "Server error",
