@@ -4,6 +4,11 @@ import "dotenv/config";
 import crypto from "crypto";
 import connectDB from "./db.js";
 import { createToken, hashPassword, comparePassword } from "./auth.js";
+import {
+  authenticateToken,
+  requireAdmin,
+} from "./middleware/authMiddleware.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 const app = express();
 
@@ -19,6 +24,22 @@ startServer();
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/api/auth/me", authenticateToken, (req, res) => {
+  res.json({
+    message: "You are authenticated",
+    user: req.user,
+  });
+});
+
+app.get("/api/admin/test", authenticateToken, requireAdmin, (req, res) => {
+  res.json({
+    message: "Welcome Admin!",
+    user: req.user,
+  });
+});
+
+app.use("/api/categories", categoryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Kaagazi backend is running!");
