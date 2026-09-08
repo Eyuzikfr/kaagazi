@@ -146,6 +146,12 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid category ID",
+      });
+    }
+
     const db = req.app.locals.db;
 
     const category = await db.collection("categories").findOne({
