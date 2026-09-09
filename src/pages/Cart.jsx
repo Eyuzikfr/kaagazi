@@ -17,13 +17,13 @@ export default function Cart({ cart, removeFromCart, moveToWishlist }) {
       <h2>Your Cart</h2>
       <ol className="cartList">
         {cart.map((product) => (
-          <li key={product.id}>
+          <li key={product._id}>
             <p>
-              {product.name} - {product.author}
+              {product.title} - {product.author}
             </p>
             <p>Rs. {product.price}</p>
             <p>x {product.quantity}</p>
-            <button onClick={() => removeFromCart(product.id)}>Remove</button>
+            <button onClick={() => removeFromCart(product._id)}>Remove</button>
             <button onClick={() => moveToWishlist(product)}>
               Move to wishlist
             </button>

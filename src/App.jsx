@@ -5,80 +5,42 @@ import Shop from "./pages/Shop";
 import Categories from "./pages/Categories";
 import CategoryProducts from "./pages/CategoryProducts";
 import Cart from "./pages/Cart";
-import Checkout from "./Checkout";
+import Checkout from "./pages/Checkout";
 import Orders from "./Orders";
 import Wishlist from "./pages/Wishlist";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import ProductDetails from "./pages/ProductDetails";
+import Login from "./pages/Login";
 import "./css/App.css";
 
 function App() {
-  useEffect(() => {
-    fetch("http://localhost:5000/api/test")
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  }, []);
-
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: "Fiction",
-      products: [
-        {
-          id: 1,
-          name: "1984",
-          author: "George Orwell",
-          description:
-            "George Orwell's 1984 is a classic dystopian novel published in 1949 that warns against the terrifying dangers of totalitarianism, mass surveillance, and the manipulation of truth.",
-          price: 500,
-        },
-        {
-          id: 2,
-          name: "The Alchemist",
-          author: "Paulo Coelho",
-          description:
-            "Paulo Coelho's masterpiece tells the mystical story of Santiago, an Andalusian shepherd boy who yearns to travel in search of a worldly treasure.",
-          price: 450,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Programming",
-      products: [
-        {
-          id: 3,
-          name: "Clean Code",
-          author: "Robert Cecil Martin",
-          description:
-            "Clean code is software source code that is easy to read, simple to understand, and simple to change over time.",
-          price: 1200,
-        },
-        {
-          id: 4,
-          name: "The Pragmatic Programmer",
-          author: "Andy Hunt and Dave Thomas",
-          description:
-            "The Pragmatic Programmer is a famous software development book written by Andrew Hunt and David Thomas.",
-          price: 1500,
-        },
-      ],
-    },
-  ]);
+  const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/categories")
+      .then((response) => response.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+      });
+  }, []);
 
   const navigate = useNavigate();
 
   function addToCart(product) {
     setCart((currentCart) => {
       const existingProduct = currentCart.find(
-        (item) => item.id === product.id,
+        (item) => item._id === product._id,
       );
 
       if (existingProduct) {
         return currentCart.map((item) => {
-          if (item.id === product.id) {
+          if (item._id === product._id) {
             return {
               ...item,
               quantity: item.quantity + 1,
@@ -93,7 +55,7 @@ function App() {
   }
 
   function removeFromCart(productId) {
-    setCart(cart.filter((item) => item.id !== productId));
+    setCart(cart.filter((item) => item._id !== productId));
   }
 
   function placeOrder() {
@@ -112,7 +74,7 @@ function App() {
   function addToWishlist(product) {
     setWishlist((currentWishlist) => {
       const existingProduct = currentWishlist.find(
-        (item) => item.id === product.id,
+        (item) => item._id === product._id,
       );
 
       if (!existingProduct) {
@@ -124,12 +86,12 @@ function App() {
   }
 
   function removeFromWishlist(productId) {
-    setWishlist(wishlist.filter((item) => item.id !== productId));
+    setWishlist(wishlist.filter((item) => item._id !== productId));
   }
 
   function moveToWishlist(product) {
     addToWishlist(product);
-    removeFromCart(product.id);
+    removeFromCart(product._id);
   }
 
   return (
@@ -220,6 +182,18 @@ function App() {
         />
 
         <Route path="/payment/success" element={<PaymentSuccess />} />
+
+        <Route
+          path="/products/:id"
+          element={
+            <ProductDetails
+              addToCart={addToCart}
+              addToWishlist={addToWishlist}
+            />
+          }
+        />
+
+        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
   );

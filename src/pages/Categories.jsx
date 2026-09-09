@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 export default function Categories({ categories }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,10 +20,9 @@ export default function Categories({ categories }) {
       />
 
       {filteredCategories.map((category) => (
-        <div key={category.id}>
-          <h3>{category.name}</h3>
-          <p>{category.products.length} books</p>
-          <Link to={`/categories/${category.id}`}>View Category</Link>
+        <div key={category._id}>
+          {category.name}
+          {/* <Link to={`/categories/${category.id}`}>View Category</Link> */}
         </div>
       ))}
     </div>

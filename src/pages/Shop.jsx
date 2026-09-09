@@ -1,41 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../css/App.css";
 // import CategoryList from "../components/CategoryList";
 
 export default function Shop({ categories, addToCart, addToWishlist }) {
   // const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  // const [selectedCategory, setSelectedCategory] = useState("all");
+  const [products, setProducts] = useState([]);
 
-  const products = categories.flatMap((category) => category.products);
+  useEffect(() => {
+    fetch("http://localhost:5000/api/products")
+      .then((response) => response.json())
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  });
 
-  const selectedCategoryData = categories.find(
-    (category) => category.id === Number(selectedCategory),
-  );
+  const handleCategoryChange = async (event) => {
+    const categoryId = event.target.value;
 
-  const filteredProducts =
-    selectedCategory === "all" ? products : selectedCategoryData.products;
+    // setSelectedCategory(categoryId);
+
+    if (categoryId === "all") {
+      const response = await fetch("http://localhost:5000/api/products");
+      const data = await response.json();
+
+      setProducts(data);
+      return;
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/api/products?categoryId=${categoryId}`,
+    );
+
+    const data = await response.json();
+
+    setProducts(data);
+  };
 
   return (
     <div>
       <h2>Customer Panel</h2>
 
-      <select onChange={(event) => setSelectedCategory(event.target.value)}>
+      <select onChange={handleCategoryChange}>
         <option value="all">All Categories</option>
         {categories.map((category) => (
-          <option key={category.id} value={category.id}>
+          <option key={category._id} value={category._id}>
             {category.name}
           </option>
         ))}
       </select>
 
       <div className="productGrid">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="productCard">
-            <h3>{product.name}</h3>
+        {products.map((product) => (
+          <div key={product._id} className="productCard">
+            <h3>{product.title}</h3>
             <p>{product.author}</p>
             <p>Rs. {product.price}</p>
 
+            <Link to={`/products/${product._id}`}>View Details</Link>
+
             <button onClick={() => addToCart(product)}>Add To Cart</button>
+
             <button onClick={() => addToWishlist(product)}>
               Add To Wishlist
             </button>

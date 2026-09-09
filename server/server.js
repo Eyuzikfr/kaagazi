@@ -10,6 +10,7 @@ import {
 } from "./middleware/authMiddleware.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get("/api/auth/me", authenticateToken, (req, res) => {
   res.json({
@@ -155,7 +157,7 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 app.post("/api/payment", (req, res) => {
-  const { amount } = req.body;
+  const { amount, orderId } = req.body;
   const transactionUuid = Date.now().toString();
   const signatureString = `total_amount=${amount},transaction_uuid=${transactionUuid},product_code=${process.env.ESEWA_PRODUCT_CODE}`;
   const signature = crypto
@@ -165,6 +167,7 @@ app.post("/api/payment", (req, res) => {
 
   const paymentData = {
     amount: amount,
+    orderId: orderId,
     tax_amount: 0,
     total_amount: amount,
     transaction_uuid: transactionUuid,

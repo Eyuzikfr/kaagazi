@@ -8,13 +8,13 @@ export default function Wishlist({ wishlist, removeFromWishlist, addToCart }) {
       {wishlist.length !== 0 ? (
         <ol className="cartList">
           {wishlist.map((item) => (
-            <li key={item.id}>
+            <li key={item._id}>
               <p>
-                {item.name} - {item.author}
+                {item.title} - {item.author}
               </p>
               <p>Rs. {item.price}</p>
 
-              <button onClick={() => removeFromWishlist(item.id)}>
+              <button onClick={() => removeFromWishlist(item._id)}>
                 Remove
               </button>
               <button onClick={() => addToCart(item)}>Add To Cart</button>
