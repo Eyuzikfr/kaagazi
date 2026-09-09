@@ -1,39 +1,7 @@
-export default function Checkout({ cart, placeOrder }) {
+export default function Checkout({ cart }) {
   const totalCost = cart.reduce((total, item) => {
     return total + item.price * item.quantity;
   }, 0);
-
-  async function handlePayment() {
-    const response = await fetch("http://localhost:5000/api/payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: totalCost,
-      }),
-    });
-
-    const data = await response.json();
-
-    const form = document.createElement("form");
-
-    form.method = "POST";
-    form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-
-    for (const [key, value] of Object.entries(data)) {
-      const input = document.createElement("input");
-
-      input.type = "hidden";
-      input.name = key;
-      input.value = value;
-
-      form.appendChild(input);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-
-    console.log(data);
-  }
 
   async function createOrder() {
     const token = localStorage.getItem("token");
