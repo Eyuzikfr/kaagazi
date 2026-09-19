@@ -31,9 +31,77 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    async function loadCart() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Failed to load cart:", data);
+        return;
+      }
+
+      const cartItems = [];
+
+      for (const item of data.items) {
+        const productResponse = await fetch(
+          `http://localhost:5000/api/products/${item.productId}`,
+        );
+
+        const product = await productResponse.json();
+
+        cartItems.push({
+          ...product,
+          quantity: item.quantity,
+        });
+      }
+
+      setCart(cartItems);
+    }
+
+    loadCart();
+  }, [isLoggedIn]);
+
   const navigate = useNavigate();
 
-  function addToCart(product) {
+  async function addToCart(product) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const response = await fetch("http://localhost:5000/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId: product._id,
+        quantity: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Add to cart failed:", data);
+      return;
+    }
+
     setCart((currentCart) => {
       const existingProduct = currentCart.find(
         (item) => item._id === product._id,
@@ -47,6 +115,7 @@ function App() {
               quantity: item.quantity + 1,
             };
           }
+
           return item;
         });
       }
@@ -55,8 +124,29 @@ function App() {
     });
   }
 
-  function removeFromCart(productId) {
-    setCart(cart.filter((item) => item._id !== productId));
+  async function removeFromCart(productId) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `http://localhost:5000/api/cart/${productId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Remove from cart failed:", data);
+      return;
+    }
+
+    setCart((currentCart) =>
+      currentCart.filter((item) => item._id !== productId),
+    );
   }
 
   function placeOrder() {
