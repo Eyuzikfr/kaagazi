@@ -19,6 +19,7 @@ function App() {
   const [wishlist, setWishlist] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
+  // fetch categories on page load
   useEffect(() => {
     fetch("http://localhost:5000/api/categories")
       .then((response) => response.json())
@@ -30,6 +31,7 @@ function App() {
       });
   }, []);
 
+  // fetch cart according to user
   useEffect(() => {
     async function loadCart() {
       const token = localStorage.getItem("token");
@@ -70,6 +72,46 @@ function App() {
     }
 
     loadCart();
+  }, [isLoggedIn]);
+
+  // fetch wishlist according to user
+  useEffect(() => {
+    async function loadWishlist() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      const response = await fetch("http://localhost:5000/api/wishlist", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Failed to load wishlist:", data);
+        return;
+      }
+
+      const wishlistItems = [];
+
+      for (const item of data.items) {
+        const productResponse = await fetch(
+          `http://localhost:5000/api/products/${item.productId}`,
+        );
+
+        const product = await productResponse.json();
+
+        wishlistItems.push(product);
+      }
+
+      setWishlist(wishlistItems);
+    }
+
+    loadWishlist();
   }, [isLoggedIn]);
 
   const navigate = useNavigate();
@@ -148,7 +190,32 @@ function App() {
     );
   }
 
-  function addToWishlist(product) {
+  async function addToWishlist(product) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const response = await fetch("http://localhost:5000/api/wishlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        productId: product._id,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Add to wishlist failed:", data);
+      return;
+    }
+
     setWishlist((currentWishlist) => {
       const existingProduct = currentWishlist.find(
         (item) => item._id === product._id,
@@ -162,8 +229,29 @@ function App() {
     });
   }
 
-  function removeFromWishlist(productId) {
-    setWishlist(wishlist.filter((item) => item._id !== productId));
+  async function removeFromWishlist(productId) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `http://localhost:5000/api/wishlist/${productId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Remove from wishlist failed:", data);
+      return;
+    }
+
+    setWishlist((currentWishlist) =>
+      currentWishlist.filter((item) => item._id !== productId),
+    );
   }
 
   function moveToWishlist(product) {
