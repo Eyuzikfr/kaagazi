@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ onLogin }) {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,6 +25,8 @@ export default function Login() {
 
     if (response.ok) {
       localStorage.setItem("token", data.token);
+      onLogin();
+      navigate("/shop");
       console.log("Login successful");
     } else {
       console.log(data.message);

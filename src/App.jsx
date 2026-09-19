@@ -18,6 +18,7 @@ function App() {
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   useEffect(() => {
     fetch("http://localhost:5000/api/categories")
@@ -94,6 +95,15 @@ function App() {
     removeFromCart(product._id);
   }
 
+  function handleLogin() {
+    setIsLoggedIn(true);
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  }
+
   return (
     <div>
       <div className="headerContainer">
@@ -118,6 +128,16 @@ function App() {
             <Link className="navLink" to="/wishlist">
               Wishlist
             </Link>
+
+            {isLoggedIn ? (
+              <button onClick={logout} className="navLink">
+                Logout
+              </button>
+            ) : (
+              <Link className="navLink" to="/login">
+                Login
+              </Link>
+            )}
           </nav>
         </header>
       </div>
@@ -193,7 +213,7 @@ function App() {
           }
         />
 
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
       </Routes>
     </div>
   );
