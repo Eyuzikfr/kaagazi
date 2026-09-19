@@ -12,6 +12,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import { ObjectId } from "mongodb";
 
 const app = express();
 
@@ -158,7 +159,7 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-app.post("/api/payment", (req, res) => {
+app.post("/api/payment", async (req, res) => {
   const { amount, orderId } = req.body;
   const transactionUuid = Date.now().toString();
   const signatureString = `total_amount=${amount},transaction_uuid=${transactionUuid},product_code=${process.env.ESEWA_PRODUCT_CODE}`;
@@ -166,6 +167,17 @@ app.post("/api/payment", (req, res) => {
     .createHmac("sha256", process.env.ESEWA_SECRET_KEY)
     .update(signatureString)
     .digest("base64");
+
+  const db = req.app.locals.db;
+
+  await db.collection("orders").updateOne(
+    { _id: new ObjectId(orderId) },
+    {
+      $set: {
+        transactionUuid,
+      },
+    },
+  );
 
   const paymentData = {
     amount: amount,
@@ -183,6 +195,48 @@ app.post("/api/payment", (req, res) => {
   };
 
   res.json(paymentData);
+});
+
+app.post("/api/payment/success", async (req, res) => {
+  try {
+    const { transaction_uuid, status } = req.body;
+
+    if (status !== "COMPLETE") {
+      return res.status(400).json({
+        message: "Payment was not completed",
+      });
+    }
+
+    const db = req.app.locals.db;
+
+    const result = await db.collection("orders").updateOne(
+      {
+        transactionUuid: transaction_uuid,
+      },
+      {
+        $set: {
+          paymentStatus: "paid",
+          status: "confirmed",
+        },
+      },
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(400).json({
+        message: "Order not found",
+      });
+    }
+
+    res.json({
+      message: "Payment successful and order updated",
+    });
+  } catch (error) {
+    console.error("PAYMENT SUCCESS ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
 });
 
 app.listen(5000, () => {

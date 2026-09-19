@@ -71,7 +71,7 @@ function ProductForm({ categories, onAddProduct }) {
         <option value="">Select Category</option>
 
         {categories.map((category) => (
-          <option key={category.id} value={category.id}>
+          <option key={category._id} value={category._id}>
             {category.name}
           </option>
         ))}

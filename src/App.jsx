@@ -16,7 +16,6 @@ import "./css/App.css";
 function App() {
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState([]);
-  const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
@@ -149,19 +148,6 @@ function App() {
     );
   }
 
-  function placeOrder() {
-    const newOrder = {
-      id: Date.now(),
-      items: cart,
-    };
-
-    setOrders((oldOrders) => [...oldOrders, newOrder]);
-
-    setCart([]);
-
-    navigate("/orders");
-  }
-
   function addToWishlist(product) {
     setWishlist((currentWishlist) => {
       const existingProduct = currentWishlist.find(
@@ -273,12 +259,9 @@ function App() {
           }
         />
 
-        <Route
-          path="/checkout"
-          element={<Checkout cart={cart} placeOrder={placeOrder} />}
-        />
+        <Route path="/checkout" element={<Checkout cart={cart} />} />
 
-        <Route path="/orders" element={<Orders orders={orders} />} />
+        <Route path="/orders" element={<Orders />} />
 
         <Route
           path="/wishlist"

@@ -11,7 +11,7 @@ export default function CategoryList({
   const [editName, setEditName] = useState("");
 
   function startEditing(category) {
-    setEditingId(category.id);
+    setEditingId(category._id);
     setEditName(category.name);
   }
 
@@ -30,8 +30,8 @@ export default function CategoryList({
     <div>
       <h2>Categories</h2>
       {categories.map((category) => (
-        <div key={category.id}>
-          {editingId === category.id ? (
+        <div key={category._id}>
+          {editingId === category._id ? (
             <form onSubmit={handleSave}>
               <input
                 type="text"
@@ -46,7 +46,7 @@ export default function CategoryList({
               {isAdmin && (
                 <>
                   <button onClick={() => startEditing(category)}>Edit</button>
-                  <button onClick={() => onDeleteCategory(category.id)}>
+                  <button onClick={() => onDeleteCategory(category._id)}>
                     Delete
                   </button>
                 </>
@@ -54,7 +54,7 @@ export default function CategoryList({
             </div>
           )}
 
-          <p>{category.products.length} books</p>
+          {/* <p>{category.products?.length || 0} books</p> */}
           <button>View Books</button>
         </div>
       ))}
