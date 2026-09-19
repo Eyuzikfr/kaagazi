@@ -1,4 +1,10 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Admin from "./pages/Admin";
 import Shop from "./pages/Shop";
@@ -19,6 +25,8 @@ function App() {
   const [wishlist, setWishlist] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
+  const location = useLocation();
+
   // fetch categories on page load
   useEffect(() => {
     fetch("http://localhost:5000/api/categories")
@@ -34,6 +42,10 @@ function App() {
   // fetch cart according to user
   useEffect(() => {
     async function loadCart() {
+      if (location.pathname === "/payment/success") {
+        return;
+      }
+
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -67,12 +79,11 @@ function App() {
           quantity: item.quantity,
         });
       }
-
       setCart(cartItems);
     }
 
     loadCart();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, location.pathname]);
 
   // fetch wishlist according to user
   useEffect(() => {
@@ -362,7 +373,10 @@ function App() {
           }
         />
 
-        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route
+          path="/payment/success"
+          element={<PaymentSuccess setCart={setCart} />}
+        />
 
         <Route
           path="/products/:id"

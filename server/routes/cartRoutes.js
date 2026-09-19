@@ -151,4 +151,31 @@ router.delete("/:productId", authenticateToken, async (req, res) => {
   }
 });
 
+router.delete("/", authenticateToken, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+
+    await db.collection("carts").updateOne(
+      {
+        userId: new ObjectId(req.user.id),
+      },
+      {
+        $set: {
+          items: [],
+        },
+      },
+
+      res.json({
+        message: "Cart cleared successfully",
+      }),
+    );
+  } catch (error) {
+    console.error("CLEAR CART ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
 export default router;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function PaymentSuccess() {
+export default function PaymentSuccess({ setCart }) {
   const [message, setMessage] = useState("Updating payment...");
 
   useEffect(() => {
@@ -35,6 +35,24 @@ export default function PaymentSuccess() {
           return;
         }
 
+        const token = localStorage.getItem("token");
+
+        const cartResponse = await fetch("http://localhost:5000/api/cart", {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const cartData = await cartResponse.json();
+
+        if (!cartResponse.ok) {
+          console.error("Cart clearing failed:", cartData);
+          setMessage("Payment successful, but cart clearing failed.");
+          return;
+        }
+
+        setCart([]);
         setMessage("Payment successful!");
       } catch (error) {
         console.error("PAYMENT SUCCESS ERROR:", error);
@@ -43,7 +61,7 @@ export default function PaymentSuccess() {
     }
 
     updatePayment();
-  }, []);
+  }, [setCart]);
 
   return (
     <div>
