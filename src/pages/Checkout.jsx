@@ -4,6 +4,19 @@ export default function Checkout({ cart }) {
   }, 0);
 
   async function createOrder() {
+    if (window.gtag) {
+      window.gtag("event", "begin_checkout", {
+        currency: "NPR",
+        value: totalCost,
+        items: cart.map((item) => ({
+          item_id: item._id,
+          item_name: item.title,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      });
+    }
+
     const token = localStorage.getItem("token");
 
     const orderResponse = await fetch("http://localhost:5000/api/orders", {

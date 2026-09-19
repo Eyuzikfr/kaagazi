@@ -10,6 +10,20 @@ export default function ProductDetails({ addToCart, addToWishlist }) {
       .then((response) => response.json())
       .then((data) => {
         setProduct(data);
+
+        if (window.gtag) {
+          window.gtag("event", "view_item", {
+            currency: "NPR",
+            value: data.price,
+            items: [
+              {
+                item_id: data._id,
+                item_name: data.title,
+                price: data.price,
+              },
+            ],
+          });
+        }
       })
       .catch((error) => {
         console.error("Error fetching product:", error);

@@ -174,6 +174,21 @@ function App() {
 
       return [...currentCart, { ...product, quantity: 1 }];
     });
+
+    if (window.gtag) {
+      window.gtag("event", "add_to_cart", {
+        currency: "NPR",
+        value: product.price,
+        items: [
+          {
+            item_id: product._id,
+            item_name: product.title,
+            price: product.price,
+            quantity: 1,
+          },
+        ],
+      });
+    }
   }
 
   async function removeFromCart(productId) {

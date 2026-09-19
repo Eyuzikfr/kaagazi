@@ -53,6 +53,15 @@ export default function PaymentSuccess({ setCart }) {
         }
 
         setCart([]);
+
+        if (window.gtag) {
+          window.gtag("event", "purchase", {
+            transaction_id: decodedData.transaction_uuid,
+            currency: "NPR",
+            value: Number(decodedData.total_amount),
+          });
+        }
+
         setMessage("Payment successful!");
       } catch (error) {
         console.error("PAYMENT SUCCESS ERROR:", error);
